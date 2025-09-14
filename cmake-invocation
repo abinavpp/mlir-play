@@ -1,0 +1,9 @@
+# export PATH=/home/abinavpp/bin:/home/abinavpp/.local/bin:/home/abinavpp/rc/bin:/home/abinavpp/.vim/plugged/fzf/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:.
+
+mycmake \
+  '-G' \
+  'Ninja' \
+  '-B' \
+  'build/' \
+  '-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld' \
+  '-DMLIR_DIR=/home/abinavpp/pj/llvm-project/cir/build/dbg/lib/cmake/mlir'
