@@ -6,4 +6,4 @@ mycmake \
   '-B' \
   'build/' \
   '-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld' \
-  '-DMLIR_DIR=/home/abinavpp/pj/llvm-project/cir/build/dbg/lib/cmake/mlir'
+  '-DMLIR_DIR=/home/abinavpp/pj/llvm-project/ml/build/dbg/lib/cmake/mlir'

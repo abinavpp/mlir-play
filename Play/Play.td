@@ -20,8 +20,9 @@ def Sol_FatPtrType : Play_Type<"FatPtr", "fatptr">;
 class Play_Op<string mnemonic, list<Trait> traits = []>
   : Op<Play_Dialect, mnemonic, traits>;
 
-def Play_GepOp : Play_Op<"gep"> {
+def Play_DefOp : Play_Op<"def"> {
   let results = (outs Sol_FatPtrType:$out);
+
   let builders = [
     OpBuilder<(ins), [{
       $_state.addTypes(play::FatPtrType::get($_builder.getContext()));
@@ -30,7 +31,7 @@ def Play_GepOp : Play_Op<"gep"> {
   let skipDefaultBuilders = 1;
 }
 
-def Play_LdOp : Play_Op<"ld"> {
+def Play_UseOp : Play_Op<"use"> {
   let arguments = (ins Sol_FatPtrType:$ptr);
   let results   = (outs I64:$out);
 

@@ -25,9 +25,9 @@ struct PlayTypeConverter : public mlir::TypeConverter {
   }
 };
 
-struct GepOpLowering : public OpConversionPattern<play::GepOp> {
-  using OpConversionPattern<play::GepOp>::OpConversionPattern;
-  LogicalResult matchAndRewrite(play::GepOp op, OpAdaptor adaptor,
+struct DefOpLowering : public OpConversionPattern<play::DefOp> {
+  using OpConversionPattern<play::DefOp>::OpConversionPattern;
+  LogicalResult matchAndRewrite(play::DefOp op, OpAdaptor adaptor,
                                 ConversionPatternRewriter &r) const override {
     auto loc = op.getLoc();
     Value base = r.create<arith::ConstantIntOp>(loc, 0, 64);
@@ -37,9 +37,9 @@ struct GepOpLowering : public OpConversionPattern<play::GepOp> {
   }
 };
 
-struct LdOpLowering : public OpConversionPattern<play::LdOp> {
-  using OpConversionPattern<play::LdOp>::OpConversionPattern;
-  LogicalResult matchAndRewrite(play::LdOp op, OneToNOpAdaptor adaptor,
+struct UseOpLowering : public OpConversionPattern<play::UseOp> {
+  using OpConversionPattern<play::UseOp>::OpConversionPattern;
+  LogicalResult matchAndRewrite(play::UseOp op, OneToNOpAdaptor adaptor,
                                 ConversionPatternRewriter &r) const override {
     auto loc = op.getLoc();
     ValueRange ptr = adaptor.getPtr();
@@ -64,9 +64,9 @@ struct Main {
     });
     convTgt.addDynamicallyLegalOp<func::ReturnOp>(
         [&](Operation *op) { return tyConv.isLegal(op); });
-    convTgt.addIllegalOp<play::GepOp, play::LdOp>();
+    convTgt.addIllegalOp<play::DefOp, play::UseOp>();
     RewritePatternSet pats(ctx);
-    pats.add<GepOpLowering, LdOpLowering>(tyConv, ctx);
+    pats.add<DefOpLowering, UseOpLowering>(tyConv, ctx);
     populateAnyFunctionOpInterfaceTypeConversionPattern(pats, tyConv);
     populateReturnOpTypeConversionPattern(pats, tyConv);
     if (failed(applyPartialConversion(mod, convTgt, std::move(pats)))) {
@@ -83,8 +83,8 @@ struct Main {
                                b.getFunctionType({play::FatPtrType::get(ctx)},
                                                  {play::FatPtrType::get(ctx)}));
     b.setInsertionPointToStart(fn.addEntryBlock());
-    b.create<play::LdOp>(loc, fn.getArgument(0));
-    Value ptr = b.create<play::GepOp>(loc);
+    b.create<play::UseOp>(loc, fn.getArgument(0));
+    Value ptr = b.create<play::DefOp>(loc);
     b.create<func::ReturnOp>(loc, ptr);
   }
 
